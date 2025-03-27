@@ -13,22 +13,18 @@ app.use(express.static(__dirname));
 
 // Google Sheets API 클라이언트 설정
 const sheets = google.sheets({ version: 'v4' });
-const auth = new google.auth.GoogleAuth({
-    keyFile: 'credentials.json',
-    scopes: ['https://www.googleapis.com/auth/spreadsheets']
-});
 
 // API 엔드포인트: 설문 제출
 app.post('/api/submit', async (req, res) => {
     try {
-        const client = await auth.getClient();
         const spreadsheetId = process.env.SPREADSHEET_ID;
+        const apiKey = process.env.API_KEY;
         
         // 다음 빈 행 찾기
         const response = await sheets.spreadsheets.values.get({
-            auth: client,
             spreadsheetId: spreadsheetId,
-            range: 'Sheet1!A:A'
+            range: 'Sheet1!A:A',
+            key: apiKey
         });
         
         const nextRow = response.data.values ? response.data.values.length + 1 : 1;
@@ -46,11 +42,11 @@ app.post('/api/submit', async (req, res) => {
         ];
         
         // 데이터 추가
-        await sheets.spreadsheets.values.append({
-            auth: client,
+        await sheets.spreadsheets.values.update({
             spreadsheetId: spreadsheetId,
             range: `Sheet1!A${nextRow}:F${nextRow}`,
             valueInputOption: 'RAW',
+            key: apiKey,
             resource: { values }
         });
         
@@ -64,11 +60,10 @@ app.post('/api/submit', async (req, res) => {
 // API 엔드포인트: 고객 목록 조회
 app.get('/api/customers', async (req, res) => {
     try {
-        const client = await auth.getClient();
         const response = await sheets.spreadsheets.values.get({
-            auth: client,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'Sheet1!A:F'
+            range: 'Sheet1!A:F',
+            key: process.env.API_KEY
         });
         
         const rows = response.data.values;
@@ -96,11 +91,10 @@ app.get('/api/customers', async (req, res) => {
 // API 엔드포인트: 고객 상세 정보 조회
 app.get('/api/customers/:id', async (req, res) => {
     try {
-        const client = await auth.getClient();
         const response = await sheets.spreadsheets.values.get({
-            auth: client,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'Sheet1!A:F'
+            range: 'Sheet1!A:F',
+            key: process.env.API_KEY
         });
         
         const rows = response.data.values;
