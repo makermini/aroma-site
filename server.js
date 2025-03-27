@@ -44,7 +44,7 @@ app.post('/api/submit', async (req, res) => {
         await sheets.spreadsheets.values.append({
             auth: auth,
             spreadsheetId: spreadsheetId,
-            range: 'A:H',
+            range: 'A:I',
             valueInputOption: 'RAW',
             resource: { values }
         });
@@ -62,7 +62,7 @@ app.get('/api/customers', async (req, res) => {
         const response = await sheets.spreadsheets.values.get({
             auth: auth,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'A:H'
+            range: 'A:I'
         });
         
         const rows = response.data.values;
@@ -96,7 +96,7 @@ app.get('/api/customers/:id', async (req, res) => {
         const response = await sheets.spreadsheets.values.get({
             auth: auth,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'A:H'
+            range: 'A:I'
         });
         
         const rows = response.data.values;
