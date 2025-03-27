@@ -31,11 +31,12 @@ app.post('/api/submit', async (req, res) => {
                 req.body.name,
                 req.body.phone,
                 req.body.registrationDate,
-                '', // D열 (답변1)
-                '', // E열 (답변2)
+                '', // D열 (답변1 - GPT 답변)
+                '', // E열 (답변2 - 아로마 조합)
                 req.body.concerns,
                 req.body.skinType,
-                req.body.skinTone
+                req.body.skinTone,
+                req.body.whiteBlackHeads // I열 (화이트&블랙헤드)
             ]
         ];
         
@@ -78,7 +79,8 @@ app.get('/api/customers', async (req, res) => {
             answer2: row[4] || '',
             concerns: row[5],
             skinType: row[6],
-            skinTone: row[7]
+            skinTone: row[7],
+            whiteBlackHeads: row[8] || ''
         }));
         
         res.json(customers);
@@ -119,7 +121,8 @@ app.get('/api/customers/:id', async (req, res) => {
             answer2: row[4] || '',
             concerns: row[5] || '',
             skinType: row[6] || '',
-            skinTone: row[7] || ''
+            skinTone: row[7] || '',
+            whiteBlackHeads: row[8] || ''
         };
         
         res.json(customer);

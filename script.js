@@ -11,6 +11,10 @@ const SURVEY_CONFIG = {
     concerns: {
         question: '본인의 피부 고민을 적어주세요.',
         type: 'textarea'
+    },
+    whiteBlackHeads: {
+        question: '화이트헤드나 블랙헤드가 있나요?',
+        options: ['없어요', '거의 없어요', '약간 있어요', '많이 있어요']
     }
 };
 
@@ -22,11 +26,12 @@ function collectSurveyData() {
         registrationDate: new Date().toISOString().split('T')[0],
         skinTone: document.querySelector('input[name="skinTone"]:checked')?.value || '',
         skinType: document.querySelector('input[name="skinType"]:checked')?.value || '',
-        concerns: document.getElementById('concerns').value
+        concerns: document.getElementById('concerns').value,
+        whiteBlackHeads: document.querySelector('input[name="whiteBlackHeads"]:checked')?.value || ''
     };
 
     // 필수 입력 확인
-    if (!data.name || !data.phone || !data.skinTone || !data.skinType || !data.concerns) {
+    if (!data.name || !data.phone || !data.skinTone || !data.skinType || !data.concerns || !data.whiteBlackHeads) {
         alert('모든 항목을 입력해주세요.');
         return null;
     }
@@ -184,6 +189,7 @@ function displayCustomerDetail(customer) {
     document.getElementById('skinTone').textContent = customer.skinTone;
     document.getElementById('skinType').textContent = customer.skinType;
     document.getElementById('concerns').textContent = customer.concerns;
+    document.getElementById('whiteBlackHeads').textContent = customer.whiteBlackHeads;
     document.getElementById('gptAnalysis').textContent = customer.answer1 || '아직 답변이 작성되지 않았습니다.';
     document.getElementById('aromaRecommendation').textContent = customer.answer2 || '아직 답변이 작성되지 않았습니다.';
 }
