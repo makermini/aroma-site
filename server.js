@@ -23,7 +23,7 @@ app.post('/api/submit', async (req, res) => {
         // 다음 빈 행 찾기
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: spreadsheetId,
-            range: 'Sheet1!A:A',
+            range: 'A:A',
             key: apiKey
         });
         
@@ -44,7 +44,7 @@ app.post('/api/submit', async (req, res) => {
         // 데이터 추가
         await sheets.spreadsheets.values.update({
             spreadsheetId: spreadsheetId,
-            range: `Sheet1!A${nextRow}:F${nextRow}`,
+            range: `A${nextRow}:F${nextRow}`,
             valueInputOption: 'RAW',
             key: apiKey,
             resource: { values }
@@ -62,7 +62,7 @@ app.get('/api/customers', async (req, res) => {
     try {
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'Sheet1!A:F',
+            range: 'A:F',
             key: process.env.API_KEY
         });
         
@@ -93,7 +93,7 @@ app.get('/api/customers/:id', async (req, res) => {
     try {
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'Sheet1!A:F',
+            range: 'A:F',
             key: process.env.API_KEY
         });
         
