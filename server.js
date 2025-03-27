@@ -6,7 +6,10 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 // 미들웨어 설정
-app.use(cors());
+app.use(cors({
+    origin: ['https://aroma-site-641371285186.asia-northeast3.run.app', 'http://localhost:8080'],
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.static(__dirname));
 
@@ -22,7 +25,7 @@ const sheets = google.sheets({ version: 'v4' });
 const client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
-    'postmessage'
+    'https://aroma-site-641371285186.asia-northeast3.run.app'
 );
 
 // API 엔드포인트: 설문 제출
@@ -140,10 +143,12 @@ app.post('/api/verify-token', async (req, res) => {
         });
         
         const payload = ticket.getPayload();
-        // 여기서 필요한 경우 사용자 이메일을 검증할 수 있습니다
-        // 예: 특정 도메인의 이메일만 허용
-        
-        res.json({ success: true });
+        // 이메일 도메인 검증 (선택사항)
+        if (payload.email_verified) {
+            res.json({ success: true });
+        } else {
+            res.status(401).json({ success: false, error: '이메일이 인증되지 않았습니다.' });
+        }
     } catch (error) {
         console.error('Token verification error:', error);
         res.status(401).json({ success: false, error: 'Invalid token' });
