@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { google } = require('googleapis');
+const jwt = require('jsonwebtoken');
 const app = express();
 
 // 미들웨어 설정
@@ -13,29 +14,27 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 8080;
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const API_KEY = process.env.API_KEY;
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 // Google Sheets API 클라이언트 설정
-const auth = new google.auth.GoogleAuth({
-    credentials: {
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        api_key: API_KEY
-    },
-    scopes: ['https://www.googleapis.com/auth/spreadsheets']
-});
+const sheets = google.sheets({ version: 'v4' });
+
+// Google OAuth 클라이언트 설정
+const client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    'postmessage'
+);
 
 // API 엔드포인트: 설문 제출
 app.post('/api/submit', async (req, res) => {
     try {
         const data = req.body;
-        const sheets = google.sheets({ version: 'v4', auth });
         
         // 현재 데이터 가져오기
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'A:A'
+            range: 'A:A',
+            key: API_KEY
         });
         
         const nextRow = response.data.values ? response.data.values.length + 1 : 2;
@@ -55,6 +54,7 @@ app.post('/api/submit', async (req, res) => {
             spreadsheetId: SPREADSHEET_ID,
             range: `A${nextRow}:F${nextRow}`,
             valueInputOption: 'RAW',
+            key: API_KEY,
             resource: { values }
         });
         
@@ -68,10 +68,10 @@ app.post('/api/submit', async (req, res) => {
 // API 엔드포인트: 고객 목록 조회
 app.get('/api/customers', async (req, res) => {
     try {
-        const sheets = google.sheets({ version: 'v4', auth });
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'A:F'
+            range: 'A:F',
+            key: API_KEY
         });
 
         if (!response.data.values || response.data.values.length <= 1) {
@@ -98,10 +98,10 @@ app.get('/api/customers', async (req, res) => {
 // API 엔드포인트: 고객 상세 정보 조회
 app.get('/api/customers/:id', async (req, res) => {
     try {
-        const sheets = google.sheets({ version: 'v4', auth });
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'A:F'
+            range: 'A:F',
+            key: API_KEY
         });
 
         if (!response.data.values || response.data.values.length <= 1) {
@@ -127,6 +127,26 @@ app.get('/api/customers/:id', async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: '고객 상세 정보 조회 실패' });
+    }
+});
+
+// 토큰 검증 엔드포인트
+app.post('/api/verify-token', async (req, res) => {
+    try {
+        const { token } = req.body;
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.CLIENT_ID
+        });
+        
+        const payload = ticket.getPayload();
+        // 여기서 필요한 경우 사용자 이메일을 검증할 수 있습니다
+        // 예: 특정 도메인의 이메일만 허용
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Token verification error:', error);
+        res.status(401).json({ success: false, error: 'Invalid token' });
     }
 });
 

@@ -9,27 +9,42 @@
 </head>
 <body>
     <div class="container">
-        <h1>고객 상세 정보</h1>
         <div class="detail-container">
-            <h2 id="customerName"></h2>
+            <h1 id="customerName">고객 정보</h1>
             
-            <div class="survey-results">
-                <h3>설문 결과</h3>
-                <div id="surveyResults"></div>
-            </div>
+            <section class="survey-results">
+                <h2>설문 결과</h2>
+                <div class="survey-grid">
+                    <div class="survey-item">
+                        <h3>피부 톤</h3>
+                        <p id="skinTone"></p>
+                    </div>
+                    <div class="survey-item">
+                        <h3>피부 타입</h3>
+                        <p id="skinType"></p>
+                    </div>
+                    <div class="survey-item">
+                        <h3>고민</h3>
+                        <p id="concerns"></p>
+                    </div>
+                </div>
+            </section>
 
-            <div class="gpt-responses">
-                <div class="gpt-response">
-                    <h3>GPT 응답 1</h3>
-                    <div id="gptResponse1"></div>
-                </div>
-                <div class="gpt-response">
-                    <h3>GPT 응답 2</h3>
-                    <div id="gptResponse2"></div>
-                </div>
+            <section class="gpt-response">
+                <h2>GPT 분석 결과</h2>
+                <div id="gptAnalysis" class="response-content"></div>
+            </section>
+
+            <section class="gpt-response">
+                <h2>추천 아로마 조합</h2>
+                <div id="aromaRecommendation" class="response-content"></div>
+            </section>
+
+            <div class="button-container">
+                <a href="customer-list.html" class="back-button">목록으로 돌아가기</a>
             </div>
         </div>
     </div>
-    <script src="customer-detail.js"></script>
+    <script src="script.js"></script>
 </body>
 </html> 

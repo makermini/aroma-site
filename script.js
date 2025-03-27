@@ -1,3 +1,41 @@
+// Google OAuth 로그인 처리
+function handleCredentialResponse(response) {
+    // 토큰을 서버로 전송하여 검증
+    fetch('/api/verify-token', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            token: response.credential
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // 로그인 성공
+            localStorage.setItem('isLoggedIn', 'true');
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainPage').style.display = 'flex';
+        } else {
+            alert('인증에 실패했습니다. 다시 시도해주세요.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('인증 중 오류가 발생했습니다.');
+    });
+}
+
+// 페이지 로드 시 로그인 상태 확인
+document.addEventListener('DOMContentLoaded', () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'flex';
+    }
+});
+
 // 설문 설정
 const SURVEY_CONFIG = {
     skinTone: {
@@ -9,8 +47,8 @@ const SURVEY_CONFIG = {
         options: ['건성', '중성', '지성', '복합성']
     },
     concerns: {
-        question: '관심 있는 피부 고민을 선택해주세요.',
-        options: ['주름', '탄력', '색소침착', '모공', '트러블', '민감성']
+        question: '본인의 피부 고민을 적어주세요.',
+        type: 'textarea'
     }
 };
 
@@ -22,7 +60,7 @@ function collectSurveyData() {
         registrationDate: new Date().toISOString().split('T')[0],
         skinTone: document.querySelector('input[name="skinTone"]:checked')?.value || '',
         skinType: document.querySelector('input[name="skinType"]:checked')?.value || '',
-        concerns: Array.from(document.querySelectorAll('input[name="concerns"]:checked')).map(cb => cb.value).join(', ')
+        concerns: document.getElementById('concerns').value
     };
 
     // 필수 입력 확인
@@ -150,4 +188,44 @@ if (searchInput) {
 // 페이지 로드 시 고객 데이터 로드
 if (document.getElementById('customerTable')) {
     loadCustomerData();
+}
+
+// 고객 상세 정보 로드
+async function loadCustomerDetail() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const customerId = urlParams.get('id');
+        
+        if (!customerId) {
+            throw new Error('고객 ID가 없습니다.');
+        }
+
+        const response = await fetch(`/api/customers/${customerId}`);
+        if (!response.ok) {
+            throw new Error('서버 응답 오류');
+        }
+
+        const customer = await response.json();
+        displayCustomerDetail(customer);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('고객 정보를 불러오는 중 오류가 발생했습니다.');
+    }
+}
+
+// 고객 상세 정보 표시
+function displayCustomerDetail(customer) {
+    document.getElementById('customerName').textContent = `${customer.name}님의 정보`;
+    document.getElementById('skinTone').textContent = customer.skinTone;
+    document.getElementById('skinType').textContent = customer.skinType;
+    document.getElementById('concerns').textContent = customer.concerns;
+
+    // GPT 분석 결과 및 추천 아로마 조합은 추후 구현
+    document.getElementById('gptAnalysis').textContent = 'GPT 분석 결과가 준비 중입니다.';
+    document.getElementById('aromaRecommendation').textContent = '추천 아로마 조합이 준비 중입니다.';
+}
+
+// 페이지 로드 시 고객 상세 정보 로드
+if (window.location.pathname.includes('customer-detail.html')) {
+    loadCustomerDetail();
 } 
