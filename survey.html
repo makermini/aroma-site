@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>설문지 - 아로마 조합 추천</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://accounts.google.com/gsi/client"></script>
 </head>
 <body>
     <div class="container">
-        <!-- 로그인 폼 -->
-        <div id="loginForm" class="form-container">
+        <div class="form-container">
             <h1>아로마 조합 추천</h1>
-            <form id="login">
+            <form id="surveyForm">
                 <div class="form-group">
                     <label for="name">이름</label>
                     <input type="text" id="name" required>
@@ -21,54 +19,37 @@
                     <label for="phone">전화번호 뒷자리</label>
                     <input type="password" id="phone" maxlength="4" required>
                 </div>
-                <button type="button" id="startButton">시작하기</button>
-            </form>
-        </div>
 
-        <!-- 질문 폼 -->
-        <div id="questionForm" class="form-container" style="display: none;">
-            <h2>피부 진단</h2>
-            <form id="questions">
                 <div class="form-group">
-                    <label>본인의 피부톤을 선택해주세요.</label>
-                    <div class="checkbox-group">
-                        <label><input type="radio" name="skinTone" value="매우 어두움" required> 매우 어두움</label>
-                        <label><input type="radio" name="skinTone" value="어두움"> 어두움</label>
-                        <label><input type="radio" name="skinTone" value="보통"> 보통</label>
-                        <label><input type="radio" name="skinTone" value="밝음"> 밝음</label>
-                        <label><input type="radio" name="skinTone" value="매우밝음"> 매우밝음</label>
+                    <label>피부 톤을 선택해주세요.</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="skinTone" value="밝은 톤" required> 밝은 톤</label>
+                        <label><input type="radio" name="skinTone" value="중간 톤"> 중간 톤</label>
+                        <label><input type="radio" name="skinTone" value="어두운 톤"> 어두운 톤</label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>본인의 피부타입을 선택해주세요.</label>
-                    <div class="checkbox-group">
+                    <label>피부 타입을 선택해주세요.</label>
+                    <div class="radio-group">
                         <label><input type="radio" name="skinType" value="건성" required> 건성</label>
+                        <label><input type="radio" name="skinType" value="중성"> 중성</label>
                         <label><input type="radio" name="skinType" value="지성"> 지성</label>
                         <label><input type="radio" name="skinType" value="복합성"> 복합성</label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="concerns">본인의 피부 고민을 적어주세요.</label>
-                    <textarea id="concerns" required></textarea>
-                </div>
-
-                <!-- 새로운 질문 추가 방법 -->
-                <!-- 1. 아래와 같은 형식으로 새로운 질문을 추가합니다 -->
-                <!-- 2. name 속성은 고유한 값을 사용해야 합니다 -->
-                <!-- 3. value 속성은 Google Sheets에 저장될 값을 지정합니다 -->
-                <!--
-                <div class="form-group">
-                    <label>새로운 질문</label>
-                    <div class="radio-group">
-                        <input type="radio" id="newQ1" name="newQuestion" value="답변1" required>
-                        <label for="newQ1">답변1</label>
-                        <input type="radio" id="newQ2" name="newQuestion" value="답변2" required>
-                        <label for="newQ2">답변2</label>
+                    <label>관심 있는 피부 고민을 선택해주세요. (복수 선택 가능)</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="concerns" value="주름"> 주름</label>
+                        <label><input type="checkbox" name="concerns" value="탄력"> 탄력</label>
+                        <label><input type="checkbox" name="concerns" value="색소침착"> 색소침착</label>
+                        <label><input type="checkbox" name="concerns" value="모공"> 모공</label>
+                        <label><input type="checkbox" name="concerns" value="트러블"> 트러블</label>
+                        <label><input type="checkbox" name="concerns" value="민감성"> 민감성</label>
                     </div>
                 </div>
-                -->
 
                 <button type="submit">제출하기</button>
             </form>
