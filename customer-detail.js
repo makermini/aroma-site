@@ -4,24 +4,19 @@ const API_KEY = process.env.API_KEY;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
-// 설문지 설정 (script.js와 동일한 설정을 사용)
+// 설문 설정
 const SURVEY_CONFIG = {
-    questions: {
-        skinTone: {
-            id: 'skinTone',
-            label: '피부톤',
-            type: 'radio'
-        },
-        skinType: {
-            id: 'skinType',
-            label: '피부타입',
-            type: 'radio'
-        },
-        concerns: {
-            id: 'concerns',
-            label: '피부고민',
-            type: 'textarea'
-        }
+    skinTone: {
+        question: '피부 톤을 선택해주세요.',
+        options: ['밝은 톤', '중간 톤', '어두운 톤']
+    },
+    skinType: {
+        question: '피부 타입을 선택해주세요.',
+        options: ['건성', '중성', '지성', '복합성']
+    },
+    concerns: {
+        question: '관심 있는 피부 고민을 선택해주세요.',
+        options: ['주름', '탄력', '색소침착', '모공', '트러블', '민감성']
     }
 };
 
@@ -113,17 +108,91 @@ function displaySurveyResults(customer) {
     if (!surveyResults) return;
 
     let html = '';
-    Object.entries(SURVEY_CONFIG.questions).forEach(([key, config]) => {
+    Object.entries(SURVEY_CONFIG).forEach(([key, config]) => {
         const answer = customer[key] || '답변 없음';
         html += `
-            <div class="question-item">
-                <h3>${config.label}</h3>
+            <div class="survey-item">
+                <h3>${config.question}</h3>
                 <p>${answer}</p>
             </div>
         `;
     });
     surveyResults.innerHTML = html;
 }
+
+// URL에서 고객 ID 가져오기
+function getCustomerId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
+
+// 고객 상세 정보 로드
+async function loadCustomerDetail() {
+    try {
+        const customerId = getCustomerId();
+        if (!customerId) {
+            throw new Error('고객 ID가 없습니다.');
+        }
+
+        const response = await fetch(`/api/customers/${customerId}`);
+        if (!response.ok) {
+            throw new Error('서버 응답 오류');
+        }
+
+        const customer = await response.json();
+        displayCustomerDetail(customer);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('고객 정보를 불러오는 중 오류가 발생했습니다.');
+    }
+}
+
+// 고객 상세 정보 표시
+function displayCustomerDetail(customer) {
+    // 고객 이름 표시
+    document.getElementById('customerName').textContent = customer.name;
+
+    // 설문 결과 표시
+    const surveyResults = document.getElementById('surveyResults');
+    surveyResults.innerHTML = `
+        <div class="survey-item">
+            <h3>${SURVEY_CONFIG.skinTone.question}</h3>
+            <p>${customer.skinTone}</p>
+        </div>
+        <div class="survey-item">
+            <h3>${SURVEY_CONFIG.skinType.question}</h3>
+            <p>${customer.skinType}</p>
+        </div>
+        <div class="survey-item">
+            <h3>${SURVEY_CONFIG.concerns.question}</h3>
+            <p>${customer.concerns}</p>
+        </div>
+    `;
+
+    // GPT 응답 표시
+    const gptResponse1 = document.getElementById('gptResponse1');
+    const gptResponse2 = document.getElementById('gptResponse2');
+    
+    if (customer.gptResponse1) {
+        gptResponse1.innerHTML = `<p>${customer.gptResponse1}</p>`;
+    } else {
+        gptResponse1.innerHTML = '<p>GPT 응답이 없습니다.</p>';
+    }
+
+    if (customer.gptResponse2) {
+        gptResponse2.innerHTML = `<p>${customer.gptResponse2}</p>`;
+    } else {
+        gptResponse2.innerHTML = '<p>GPT 응답이 없습니다.</p>';
+    }
+}
+
+// 뒤로 가기 버튼 이벤트 리스너
+document.getElementById('backButton').addEventListener('click', () => {
+    window.location.href = 'customer-list.html';
+});
+
+// 페이지 로드 시 고객 상세 정보 로드
+document.addEventListener('DOMContentLoaded', loadCustomerDetail);
 
 // 페이지 로드 시 실행
 window.onload = function() {
