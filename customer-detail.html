@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고객 상세 - 아로마 조합 추천</title>
+    <title>고객 상세 정보</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://accounts.google.com/gsi/client"></script>
 </head>
@@ -12,48 +12,32 @@
         <div class="detail-container">
             <h1 id="customerName">고객 정보</h1>
             
-            <section class="survey-results">
-                <h2>설문 결과</h2>
-                <div class="survey-item">
-                    <div class="survey-row">
-                        <div class="question">이름</div>
-                        <div class="answer" id="name"></div>
-                    </div>
-                    <div class="survey-row">
-                        <div class="question">연락처</div>
-                        <div class="answer" id="phone"></div>
-                    </div>
-                    <div class="survey-row">
-                        <div class="question">등록일</div>
-                        <div class="answer" id="registrationDate"></div>
-                    </div>
-                    <div class="survey-row">
-                        <div class="question">피부 톤</div>
-                        <div class="answer" id="skinTone"></div>
-                    </div>
-                    <div class="survey-row">
-                        <div class="question">피부 타입</div>
-                        <div class="answer" id="skinType"></div>
-                    </div>
-                    <div class="survey-row">
-                        <div class="question">피부 고민</div>
-                        <div class="answer" id="concerns"></div>
-                    </div>
+            <div class="info-grid">
+                <div class="info-section">
+                    <h2>기본 정보</h2>
+                    <p><strong>이름:</strong> <span id="name"></span></p>
+                    <p><strong>전화번호:</strong> <span id="phone"></span></p>
+                    <p><strong>등록일:</strong> <span id="registrationDate"></span></p>
                 </div>
-            </section>
+                
+                <div class="info-section">
+                    <h2>피부 정보</h2>
+                    <p><strong>피부 톤:</strong> <span id="skinTone"></span></p>
+                    <p><strong>피부 타입:</strong> <span id="skinType"></span></p>
+                    <p><strong>피부 고민:</strong> <span id="concerns"></span></p>
+                </div>
+            </div>
 
-            <section class="gpt-response">
-                <h2>답변 1</h2>
-                <div id="gptAnalysis" class="response-content"></div>
-            </section>
+            <div class="response-grid">
+                <section class="gpt-response">
+                    <h2>답변 1</h2>
+                    <div id="gptAnalysis" class="response-content"></div>
+                </section>
 
-            <section class="gpt-response">
-                <h2>답변 2</h2>
-                <div id="aromaRecommendation" class="response-content"></div>
-            </section>
-
-            <div class="button-container">
-                <a href="customer-list.html" class="back-button">목록으로 돌아가기</a>
+                <section class="gpt-response">
+                    <h2>답변 2</h2>
+                    <div id="aromaRecommendation" class="response-content"></div>
+                </section>
             </div>
         </div>
     </div>

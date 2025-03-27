@@ -191,4 +191,30 @@ function displayCustomerDetail(customer) {
 // 페이지 로드 시 고객 상세 정보 로드
 if (window.location.pathname.includes('customer-detail.html')) {
     loadCustomerDetail();
+}
+
+async function submitSurvey(event) {
+    event.preventDefault();
+    
+    const surveyData = collectSurveyData();
+    
+    try {
+        const response = await fetch('/api/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(surveyData)
+        });
+
+        if (!response.ok) {
+            throw new Error('서버 응답 오류');
+        }
+
+        alert('설문이 성공적으로 제출되었습니다.');
+        window.location.href = '/index.html'; // 메인 페이지로 이동
+    } catch (error) {
+        console.error('제출 오류:', error);
+        alert('제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
 } 
