@@ -1,6 +1,8 @@
-FROM node:16
+FROM node:16-slim
 WORKDIR /app
-COPY . .
+COPY package*.json ./
 RUN npm install
+COPY . .
+ENV PORT=8080
 EXPOSE 8080
-CMD ["node", "server.js"] 
+CMD ["npm", "start"] 
