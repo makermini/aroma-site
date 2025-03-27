@@ -13,12 +13,17 @@ app.use(express.static(__dirname));
 
 // Google Sheets API 클라이언트 설정
 const sheets = google.sheets({ version: 'v4' });
+const auth = new google.auth.JWT(
+    process.env.CLIENT_EMAIL,
+    null,
+    process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    ['https://www.googleapis.com/auth/spreadsheets']
+);
 
 // API 엔드포인트: 설문 제출
 app.post('/api/submit', async (req, res) => {
     try {
         const spreadsheetId = process.env.SPREADSHEET_ID;
-        const apiKey = process.env.API_KEY;
         
         // 데이터 준비
         const values = [
@@ -34,10 +39,10 @@ app.post('/api/submit', async (req, res) => {
         
         // 데이터 추가
         await sheets.spreadsheets.values.append({
+            auth: auth,
             spreadsheetId: spreadsheetId,
             range: 'A:F',
             valueInputOption: 'RAW',
-            key: apiKey,
             resource: { values }
         });
         
@@ -52,9 +57,9 @@ app.post('/api/submit', async (req, res) => {
 app.get('/api/customers', async (req, res) => {
     try {
         const response = await sheets.spreadsheets.values.get({
+            auth: auth,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'A:F',
-            key: process.env.API_KEY
+            range: 'A:F'
         });
         
         const rows = response.data.values;
@@ -83,9 +88,9 @@ app.get('/api/customers', async (req, res) => {
 app.get('/api/customers/:id', async (req, res) => {
     try {
         const response = await sheets.spreadsheets.values.get({
+            auth: auth,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'A:F',
-            key: process.env.API_KEY
+            range: 'A:F'
         });
         
         const rows = response.data.values;
