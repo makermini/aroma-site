@@ -20,15 +20,6 @@ app.post('/api/submit', async (req, res) => {
         const spreadsheetId = process.env.SPREADSHEET_ID;
         const apiKey = process.env.API_KEY;
         
-        // 다음 빈 행 찾기
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: spreadsheetId,
-            range: 'A:A',
-            key: apiKey
-        });
-        
-        const nextRow = response.data.values ? response.data.values.length + 1 : 1;
-        
         // 데이터 준비
         const values = [
             [
@@ -42,9 +33,9 @@ app.post('/api/submit', async (req, res) => {
         ];
         
         // 데이터 추가
-        await sheets.spreadsheets.values.update({
+        await sheets.spreadsheets.values.append({
             spreadsheetId: spreadsheetId,
-            range: `A${nextRow}:F${nextRow}`,
+            range: 'A:F',
             valueInputOption: 'RAW',
             key: apiKey,
             resource: { values }
@@ -103,19 +94,22 @@ app.get('/api/customers/:id', async (req, res) => {
         }
         
         const customerId = parseInt(req.params.id);
-        if (customerId < 1 || customerId >= rows.length) {
+        // 첫 번째 행은 헤더이므로 실제 데이터는 customerId + 1 행에 있습니다.
+        const rowIndex = customerId;
+        
+        if (rowIndex < 1 || rowIndex >= rows.length) {
             return res.status(404).json({ success: false, error: '고객을 찾을 수 없습니다.' });
         }
         
-        const row = rows[customerId];
+        const row = rows[rowIndex];
         const customer = {
             id: customerId,
-            name: row[0],
-            phone: row[1],
-            registrationDate: row[2],
-            skinTone: row[3],
-            skinType: row[4],
-            concerns: row[5]
+            name: row[0] || '',
+            phone: row[1] || '',
+            registrationDate: row[2] || '',
+            skinTone: row[3] || '',
+            skinType: row[4] || '',
+            concerns: row[5] || ''
         };
         
         res.json(customer);
