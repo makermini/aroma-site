@@ -25,15 +25,17 @@ app.post('/api/submit', async (req, res) => {
     try {
         const spreadsheetId = process.env.SPREADSHEET_ID;
         
-        // 데이터 준비
+        // 데이터 준비 (F부터 저장)
         const values = [
             [
                 req.body.name,
                 req.body.phone,
                 req.body.registrationDate,
-                req.body.skinTone,
+                '', // D열 (답변1)
+                '', // E열 (답변2)
+                req.body.concerns,
                 req.body.skinType,
-                req.body.concerns
+                req.body.skinTone
             ]
         ];
         
@@ -41,7 +43,7 @@ app.post('/api/submit', async (req, res) => {
         await sheets.spreadsheets.values.append({
             auth: auth,
             spreadsheetId: spreadsheetId,
-            range: 'A:F',
+            range: 'A:H',
             valueInputOption: 'RAW',
             resource: { values }
         });
@@ -59,7 +61,7 @@ app.get('/api/customers', async (req, res) => {
         const response = await sheets.spreadsheets.values.get({
             auth: auth,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'A:F'
+            range: 'A:H'
         });
         
         const rows = response.data.values;
@@ -72,9 +74,11 @@ app.get('/api/customers', async (req, res) => {
             name: row[0],
             phone: row[1],
             registrationDate: row[2],
-            skinTone: row[3],
-            skinType: row[4],
-            concerns: row[5]
+            answer1: row[3] || '',
+            answer2: row[4] || '',
+            concerns: row[5],
+            skinType: row[6],
+            skinTone: row[7]
         }));
         
         res.json(customers);
@@ -90,7 +94,7 @@ app.get('/api/customers/:id', async (req, res) => {
         const response = await sheets.spreadsheets.values.get({
             auth: auth,
             spreadsheetId: process.env.SPREADSHEET_ID,
-            range: 'A:F'
+            range: 'A:H'
         });
         
         const rows = response.data.values;
@@ -99,7 +103,6 @@ app.get('/api/customers/:id', async (req, res) => {
         }
         
         const customerId = parseInt(req.params.id);
-        // 첫 번째 행은 헤더이므로 실제 데이터는 customerId + 1 행에 있습니다.
         const rowIndex = customerId;
         
         if (rowIndex < 1 || rowIndex >= rows.length) {
@@ -112,9 +115,11 @@ app.get('/api/customers/:id', async (req, res) => {
             name: row[0] || '',
             phone: row[1] || '',
             registrationDate: row[2] || '',
-            skinTone: row[3] || '',
-            skinType: row[4] || '',
-            concerns: row[5] || ''
+            answer1: row[3] || '',
+            answer2: row[4] || '',
+            concerns: row[5] || '',
+            skinType: row[6] || '',
+            skinTone: row[7] || ''
         };
         
         res.json(customer);

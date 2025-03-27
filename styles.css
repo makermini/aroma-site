@@ -344,6 +344,29 @@ tr:hover {
     color: #666;
 }
 
+.survey-row {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.survey-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.question {
+    flex: 0 0 150px;
+    font-weight: bold;
+    color: #666;
+}
+
+.answer {
+    flex: 1;
+}
+
 .gpt-response {
     margin: 30px 0;
     padding: 20px;
@@ -354,6 +377,7 @@ tr:hover {
 .response-content {
     margin-top: 15px;
     line-height: 1.8;
+    white-space: pre-wrap;
 }
 
 .back-button {

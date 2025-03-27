@@ -178,13 +178,14 @@ async function loadCustomerDetail() {
 // 고객 상세 정보 표시
 function displayCustomerDetail(customer) {
     document.getElementById('customerName').textContent = `${customer.name}님의 정보`;
+    document.getElementById('name').textContent = customer.name;
+    document.getElementById('phone').textContent = customer.phone;
+    document.getElementById('registrationDate').textContent = customer.registrationDate;
     document.getElementById('skinTone').textContent = customer.skinTone;
     document.getElementById('skinType').textContent = customer.skinType;
     document.getElementById('concerns').textContent = customer.concerns;
-
-    // GPT 분석 결과 및 추천 아로마 조합은 추후 구현
-    document.getElementById('gptAnalysis').textContent = 'GPT 분석 결과가 준비 중입니다.';
-    document.getElementById('aromaRecommendation').textContent = '추천 아로마 조합이 준비 중입니다.';
+    document.getElementById('gptAnalysis').textContent = customer.answer1 || '아직 답변이 작성되지 않았습니다.';
+    document.getElementById('aromaRecommendation').textContent = customer.answer2 || '아직 답변이 작성되지 않았습니다.';
 }
 
 // 페이지 로드 시 고객 상세 정보 로드
